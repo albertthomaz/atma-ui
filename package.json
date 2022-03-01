@@ -1,0 +1,16 @@
+{
+  "name": "@albertthomaz/atma-ui",
+  "version": "1.0.0",
+  "description": "Simple User Interface Library that I use in my projects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Albert Thomaz",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^17.0.39",
+    "react": "^17.0.2",
+    "typescript": "^4.6.2"
+  }
+}
