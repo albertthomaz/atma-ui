@@ -1,27 +1,50 @@
-import { useEffect, useMemo, useReducer, useRef } from 'react'
+import React, { useEffect, useMemo, useReducer, useRef } from 'react'
+import { ButtonProps } from '../../components/Button/Button'
 
-const initialState = {
+enum ActionKind {
+    ACTIVE = 'active',
+    FOCUS = 'focus',
+    HOVER = 'hover'
+}
+
+interface Action {
+    type: ActionKind
+    value: boolean
+}
+
+export interface StateCSS {
+    hover: boolean
+    focus: boolean
+    active: boolean
+}
+
+type Props = ButtonProps
+
+const initialState: StateCSS = {
     hover: false,
     focus: false,
     active: false
 }
 
-export function useInlineStyle(styleFn: any, props: any) {
+type StyleFn = (stateCSS: StateCSS, props?: Props) => React.CSSProperties
+
+export function useInlineStyle(styleFn: StyleFn, props?: Props) {
     const ref = useRef(null)
     const [styleState, dispatch] = useReducer(reducer, initialState)
-    const setStyle = (type: string, value: boolean) => dispatch({ type, value })
+    const setStyle = (type: ActionKind, value: boolean) =>
+        dispatch({ type, value })
     const style = useMemo(
         () => styleFn(styleState, props),
         [styleFn, styleState, props]
     )
     useEffect(() => {
         let el: EventTarget
-        const pointerOver = () => setStyle('hover', true)
-        const pointerOut = () => setStyle('hover', false)
-        const focus = () => setStyle('focus', true)
-        const blur = () => setStyle('focus', false)
-        const pointerDown = () => setStyle('active', true)
-        const pointerUp = () => setStyle('active', false)
+        const pointerOver = () => setStyle(ActionKind.HOVER, true)
+        const pointerOut = () => setStyle(ActionKind.HOVER, false)
+        const focus = () => setStyle(ActionKind.FOCUS, true)
+        const blur = () => setStyle(ActionKind.FOCUS, false)
+        const pointerDown = () => setStyle(ActionKind.ACTIVE, true)
+        const pointerUp = () => setStyle(ActionKind.ACTIVE, false)
         if (ref.current) {
             el = ref.current
             el.addEventListener('pointerover', pointerOver)
@@ -43,7 +66,7 @@ export function useInlineStyle(styleFn: any, props: any) {
     return [ref, style]
 }
 
-function reducer(state: any, action: any) {
+function reducer(state: StateCSS, action: Action) {
     switch (action.type) {
         case 'hover':
             return { ...state, hover: action.value }
