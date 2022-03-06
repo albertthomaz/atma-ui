@@ -31,7 +31,7 @@ type StyleFn = (stateCSS: StateCSS, props?: Props) => React.CSSProperties
 export function useInlineStyle(styleFn: StyleFn, props?: Props) {
     const ref = useRef(null)
     const [styleState, dispatch] = useReducer(reducer, initialState)
-    const setStyle = (type: ActionKind, value: boolean) =>
+    const setAction = (type: ActionKind, value: boolean) =>
         dispatch({ type, value })
     const style = useMemo(
         () => styleFn(styleState, props),
@@ -39,12 +39,12 @@ export function useInlineStyle(styleFn: StyleFn, props?: Props) {
     )
     useEffect(() => {
         let el: EventTarget
-        const pointerOver = () => setStyle(ActionKind.HOVER, true)
-        const pointerOut = () => setStyle(ActionKind.HOVER, false)
-        const focus = () => setStyle(ActionKind.FOCUS, true)
-        const blur = () => setStyle(ActionKind.FOCUS, false)
-        const pointerDown = () => setStyle(ActionKind.ACTIVE, true)
-        const pointerUp = () => setStyle(ActionKind.ACTIVE, false)
+        const pointerOver = () => setAction(ActionKind.HOVER, true)
+        const pointerOut = () => setAction(ActionKind.HOVER, false)
+        const focus = () => setAction(ActionKind.FOCUS, true)
+        const blur = () => setAction(ActionKind.FOCUS, false)
+        const pointerDown = () => setAction(ActionKind.ACTIVE, true)
+        const pointerUp = () => setAction(ActionKind.ACTIVE, false)
         if (ref.current) {
             el = ref.current
             el.addEventListener('pointerover', pointerOver)
@@ -62,8 +62,8 @@ export function useInlineStyle(styleFn: StyleFn, props?: Props) {
             el.removeEventListener('pointerdown', pointerDown)
             el.removeEventListener('pointerup', pointerUp)
         }
-    }, [ref, setStyle])
-    return [ref, style]
+    }, [ref, setAction])
+    return [ref, style] as const
 }
 
 function reducer(state: StateCSS, action: Action) {
